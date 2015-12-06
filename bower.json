@@ -1,0 +1,15 @@
+{
+  "name": "rqjs",
+  "private": true,
+  "dependencies": {
+    "bootstrap-sass": "git://github.com/twbs/bootstrap-sass.git#v3.1.0",
+    "modernizr": "~2.6.2",
+    "requirejs": "~2.1.8",
+    "jquery": "~1.10.2",
+    "requirejs-plugins": "~1.0.3"
+  },
+  "devDependencies": {
+    "chai": "~3.4.2",
+    "mocha": "~2.3.4"
+  }
+}
