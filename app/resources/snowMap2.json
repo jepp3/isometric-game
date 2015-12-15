@@ -1,0 +1,65 @@
+{ "height":4,
+ "layers":[
+        {
+         "data":[1, 1, 0, 0, 1, 1, 130, 0, 17, 17, 100, 100, 17, 17, 100, 100],
+         "height":4,
+         "name":"background",
+         "opacity":1,
+         "type":"tilelayer",
+         "visible":true,
+         "width":4,
+         "x":0,
+         "y":0
+        }],
+ "nextobjectid":1,
+ "orientation":"isometric",
+ "properties":
+    {
+     "music":"music\/overworld_theme.ogg",
+     "tileset":"tilesetdefs\/tileset_snowplains.txt",
+     "title":"New Snowplains Map"
+    },
+ "renderorder":"right-down",
+ "tileheight":32,
+ "tilesets":[
+        {
+         "firstgid":1,
+         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains.png",
+         "imageheight":1024,
+         "imagewidth":1024,
+         "margin":0,
+         "name":"snowplains",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":128,
+         "tileheight":128,
+         "tilewidth":64
+        }, 
+        {
+         "firstgid":129,
+         "image":"..\/..\/..\/flare-game\/tiled\/dungeon\/tiled_dungeon_2x2.png",
+         "imageheight":256,
+         "imagewidth":512,
+         "margin":0,
+         "name":"tiled_dungeon_2x2",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":16,
+         "tileheight":64,
+         "tileoffset":
+            {
+             "x":0,
+             "y":16
+            },
+         "tilewidth":128
+        }],
+ "tilewidth":64,
+ "version":1,
+ "width":4
+}

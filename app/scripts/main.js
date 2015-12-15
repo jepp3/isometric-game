@@ -56,9 +56,12 @@ require.config({
     }
 });
 
-require(['app', 'jquery'], function (app, $) {
+require(['game', 'jquery'], function (Game, $) {
     'use strict';
     // use app here
-    console.log(app);
+    var game = new Game();
+    console.log(game);
+
+    game.init();
     console.log('Running jQuery %s', $().jquery);
 });
