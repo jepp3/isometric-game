@@ -6,13 +6,13 @@
   <property name="title" value="New Snowplains Map"/>
  </properties>
  <tileset firstgid="1" name="snowplains" tilewidth="64" tileheight="128" tilecount="128">
-  <image source="../../../flare-game/tiled/snowplains/snowplains.png" width="1024" height="1024"/>
+  <image source="../../flare-game/tiled/snowplains/snowplains.png" width="1024" height="1024"/>
  </tileset>
  <tileset firstgid="129" name="grassland_trees" tilewidth="64" tileheight="128" tilecount="64">
-  <image source="../../../flare-game/tiled/grassland/grassland_trees.png" width="1024" height="512"/>
+  <image source="../../flare-game/tiled/grassland/grassland_trees.png" width="1024" height="512"/>
  </tileset>
  <tileset firstgid="193" name="rules" tilewidth="64" tileheight="32" tilecount="8">
-  <image source="../../../flare-game/tiled/grassland/set_rules.png" width="128" height="128"/>
+  <image source="../../flare-game/tiled/grassland/set_rules.png" width="128" height="128"/>
  </tileset>
  <layer name="ground" width="10" height="10">
   <data encoding="csv">
@@ -56,7 +56,7 @@
 0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <layer name="rules" width="10" height="10" opacity="0.72">
+ <layer name="rules" width="10" height="10" opacity="0.55">
   <data encoding="csv">
 0,197,0,0,0,0,0,0,0,0,
 197,197,0,0,0,197,0,0,0,0,

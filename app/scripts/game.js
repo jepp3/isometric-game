@@ -15,9 +15,7 @@ define(["screens/LoadingScreen", "jquery"], function (LoadingScreen, $) {
     Game.prototype.init = function () {
       console.log("setting up loading screen")
         // 1. load a  screen ( loader )
-        var loadingScreen = new LoadingScreen({
-            "canvas": $(".gameScreen")
-        });
+        var loadingScreen = new LoadingScreen();
 
         loadingScreen.start();
     };

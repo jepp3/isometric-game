@@ -1,78 +1,23 @@
 { "height":10,
  "layers":[
         {
-         "data":[33, 129, 16, 16, 16, 16, 16, 16, 16, 35, 131, 16, 16, 16, 142, 16, 140, 16, 16, 16, 16, 106, 107, 106, 107, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 126, 125, 16, 16, 131, 16, 16, 16, 16, 114, 124, 121, 121, 16, 16, 16, 16, 16, 76, 124, 114, 137, 127, 16, 16, 16, 16, 16, 16, 114, 99, 16, 124, 16, 16, 16, 16, 74, 75, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 16, 35, 16, 16, 16, 16, 16, 16, 16, 16, 35],
+         "data":[18, 18, 18, 18, 18, 18, 18, 19, 19, 19, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 31, 31, 31, 31, 31, 18, 18, 18, 18, 31, 31, 31, 31, 31, 31, 18, 18, 21, 21, 31, 21, 18, 18, 18, 18, 18, 18, 18, 18, 31, 18, 31, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 0, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18],
          "height":10,
-         "name":"background",
-         "opacity":1,
+         "name":"ground",
+         "opacity":0,
          "type":"tilelayer",
          "visible":true,
          "width":10,
          "x":0,
          "y":0
-        }, 
+        },
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "data":[127, 125, 125, 92, 22, 18, 18, 18, 18, 18, 110, 109, 22, 111, 116, 99, 32, 32, 18, 115, 125, 125, 127, 18, 22, 115, 32, 31, 31, 18, 17, 110, 18, 31, 99, 32, 111, 31, 100, 31, 18, 92, 92, 116, 22, 111, 18, 18, 18, 18, 18, 18, 111, 18, 18, 18, 18, 18, 58, 18, 18, 37, 18, 18, 88, 18, 61, 18, 57, 31, 18, 33, 124, 18, 18, 0, 18, 18, 18, 86, 18, 33, 18, 18, 18, 59, 60, 18, 87, 18, 50, 49, 18, 114, 18, 18, 18, 83, 18, 18],
          "height":10,
-         "name":"backgroundfringe",
+         "name":"objects_on_the_grond",
          "opacity":1,
          "type":"tilelayer",
-         "visible":false,
-         "width":10,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":10,
-         "name":"snowbottom",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":false,
-         "width":10,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":10,
-         "name":"object",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":false,
-         "width":10,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":10,
-         "name":"snowtop",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":false,
-         "width":10,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":10,
-         "name":"collision",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":false,
-         "width":10,
-         "x":0,
-         "y":0
-        }, 
-        {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-         "height":10,
-         "name":"automap",
-         "opacity":1,
-         "type":"tilelayer",
-         "visible":false,
+         "visible":true,
          "width":10,
          "x":0,
          "y":0
@@ -90,23 +35,7 @@
  "tilesets":[
         {
          "firstgid":1,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/tiled_collision.png",
-         "imageheight":32,
-         "imagewidth":960,
-         "margin":0,
-         "name":"collision",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":15,
-         "tileheight":32,
-         "tilewidth":64
-        }, 
-        {
-         "firstgid":16,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains.png",
+         "image":"resources/snowplains.png",
          "imageheight":1024,
          "imagewidth":1024,
          "margin":0,
@@ -119,159 +48,6 @@
          "tilecount":128,
          "tileheight":128,
          "tilewidth":64
-        }, 
-        {
-         "firstgid":144,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains_water.png",
-         "imageheight":256,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"water",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":64,
-         "tileheight":64,
-         "tileoffset":
-            {
-             "x":0,
-             "y":32
-            },
-         "tilewidth":64
-        }, 
-        {
-         "firstgid":208,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains_structures.png",
-         "imageheight":512,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"tall structures",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":32,
-         "tileheight":256,
-         "tilewidth":64
-        }, 
-        {
-         "firstgid":240,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains_trees.png",
-         "imageheight":512,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"trees",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":16,
-         "tileheight":256,
-         "tileoffset":
-            {
-             "x":-32,
-             "y":0
-            },
-         "tilewidth":128
-        }, 
-        {
-         "firstgid":256,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/set_rules.png",
-         "imageheight":128,
-         "imagewidth":128,
-         "margin":0,
-         "name":"set_rules",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":8,
-         "tileheight":32,
-         "tilewidth":64
-        }, 
-        {
-         "firstgid":264,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/tiled_snowplains_2x2.png",
-         "imageheight":512,
-         "imagewidth":512,
-         "margin":0,
-         "name":"tiled_snowplains_2x2",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":32,
-         "tileheight":64,
-         "tileoffset":
-            {
-             "x":0,
-             "y":16
-            },
-         "tilewidth":128
-        }, 
-        {
-         "firstgid":296,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains_ice.png",
-         "imageheight":1792,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"snowplains_ice",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":224,
-         "tileheight":128,
-         "tileoffset":
-            {
-             "x":0,
-             "y":32
-            },
-         "tilewidth":64
-        }, 
-        {
-         "firstgid":520,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains_other.png",
-         "imageheight":1792,
-         "imagewidth":1024,
-         "margin":0,
-         "name":"snowplains_other",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":224,
-         "tileheight":128,
-         "tilewidth":64
-        }, 
-        {
-         "firstgid":744,
-         "image":"..\/..\/..\/flare-game\/tiled\/snowplains\/snowplains_rottentower.png",
-         "imageheight":358,
-         "imagewidth":358,
-         "margin":0,
-         "name":"snowplains_rottentower",
-         "properties":
-            {
-
-            },
-         "spacing":0,
-         "tilecount":1,
-         "tileheight":358,
-         "tileoffset":
-            {
-             "x":0,
-             "y":48
-            },
-         "tilewidth":358
         }],
  "tilewidth":64,
  "version":1,

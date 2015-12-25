@@ -1,133 +1,269 @@
-define([],function(){
+define(["easel","utils/Session","utils/MapWalker"],function(createjs,session,MapWalker){
 
-    var IsometricMap = function(canvas,tiledMap) {
-        this.canvas = canvas;
-        this.tiledMap = tiledMap;
+
+    /**
+    * This class draws a isometric map. It gives you posibilites to add eventHandlers when
+    * interacting with different tile types.
+    *
+    * For example, when adding some custom collision detection or some special enemies, that you want
+    * to handle differently, you can do so by giving a function as parameter, that matches that
+    * specific condition.
+    *s
+    * @param tileMap TiledMap
+    *
+    **/
+    var IsometricMap = function(tiledMap) {
+          var canvas =  document.getElementById("c");
     };
 
     /**
-    * Print the isometric tiles on the canvas
+    *   Print the isometric tiles on the canvas
+    *
+    *   Iterate over all the layers, start with the one in the bottom. Then print every layer seperatly.
+    *
+    *   The tileSets used in a map can be shared between different layers.
     **/
-    IsometricMap.prototype.printOutTilesOnCanvas = function() {
+    IsometricMap.prototype.printOutTilesOnCanvas = function(tiledMap) {
 
-      // 1. select the first layer
-      var backgroundLayer = selectLayer.call(this,"background");
-      var tileset = selectTileset.call(this,"snowplains");
-      iterateOverRows(backgroundLayer.data,0,backgroundLayer,this.tiledMap,tileset);
+        // move this
+        this.tiledMap = tiledMap;
 
-/*
-      for(i, loop through rows)
-        for(j, loop through columns)
-          x = j * tile width
-          y = i * tile height
-          tileType = levelData[i][j]
-          placetile(tileType, twoDToIso(new Point(x, y)))
-*/
-        console.log(this.tiledMap);
+        var table =[];
+        // 1. select the next layer
+        this.tiledMap.layers.forEach(function(layer) {
+
+            if(layer.name ==="rules") {
+              // if its an collision layer , then generate a colision data instead
+              table.push(collectRules.call(this,layer.data,0,layer,this.tiledMap,this.tiledMap.tilesets));
+
+            } else {
+
+              // if its an normal tile layer do this
+              table.push(iterateOverRows.call(this,layer.data,0,layer,this.tiledMap,this.tiledMap.tilesets));
+
+            }
+            console.log(table)
+
+        }.bind(this));
+
+        // return the workable variant of the matrix
+        return table;
+    };
+
+    /**
+    *  This method gives you the correct tileset to use.
+    *  Each tileSet has a seed of uid's that only lives inside that tileset.
+    *
+    * This method will simply check in whats tileSets seed of uid the given gid resists.
+    *
+    * @param gid uniq identifier for a given tile
+    * @param list of tileSets
+    **/
+    function getTileSetByUid(gid,tileSets) {
+
+        if(gid === 0)
+          return undefined;
+        if(tileSets.length === 0)
+          throw new Error("inconsistent tilemap. the gid " + gid + " " + "was not found in the list of tilesets");
+        // if gid is larger than the smallest in current and smaller than the largest in current
+        if(gid >= tileSets[0].firstgid  && ( tileSets.length == 1 || tileSets[1].firstgid > gid))
+          return tileSets[0];
+        else
+          return getTileSetByUid(gid,tileSets.slice(1));
 
     };
 
-    function iterateOverRows(flatListOfElements,row,layer,map,tileset) {
 
-        flatListOfElements.slice(0,map.width).forEach(function(column,index) {
-            var twoDPoint = {};
-            twoDPoint.x = column * tileset.tilewidth;
-            twoDPoint.y = row * tileset.tileheight;
+    function collectRules(flatListOfElements,row,layer,map,tilesets) {
 
-            var tileSpecification = retriveTileSpecification(column,tileset);
-            placeTile(tileSpecification,twoDToIso(twoDPoint));
+      var tiles = [];
+      flatListOfElements.slice(0,map.width).forEach(function(gid,index) {
 
-        });
-        if(flatListOfElements.length >= map.width)
-            iterateOverRows(flatListOfElements.slice(map.width),row+1,layer,map,tileset);
+            var rule = retriveRule(gid,tilesets);
+            tiles.push(rule);
+
+        }.bind(this));
+
+        // continue with next row ( if there are any )
+        if(flatListOfElements.length >= map.width) {
+
+            var existingRows = collectRules.call(this,flatListOfElements.slice(map.width),row+1,layer,map,tilesets);
+            existingRows.unshift(tiles);
+            return existingRows;
+
+        } else {
+
+            var rows = [];
+            return rows;
+
+        }
+
     };
 
-    function retriveTileSpecification(column,tileset) {
+    /**
+    * Will return a rule , currently supported is wall, region and pit
+    *
+    * @param gid raw gid ( no rebase )
+    * @param tilesets an array of tilesets to filter from.
+    * @returns ruleSpecification
+    **/
+    function retriveRule(gid,tilesets) {
+
+      var tileset = getTileSetByUid(gid,tilesets);
+
+      if(tileset === undefined)
+          return undefined;
+
+      //todo: write generic method for geting a rebased gid
+      var rebasedgid = gid - tileset.firstgid +1;
+
+      var ruleSpecification = {};
+
+      switch (rebasedgid) {
+        case 1:
+          ruleSpecification.type = "REGION";
+          break;
+        case 2:
+          ruleSpecification.type = "VOID";
+          break;
+        case 3:
+          ruleSpecification.type = "FLOOR";
+          break;
+        case 4:
+          ruleSpecification.type = "PIT";
+          break;
+        case 5:
+          ruleSpecification.type = "WALL";
+          break;
+        default:
+          ruleSpecification.type = "UNKOWN";
+
+      }
+
+      return ruleSpecification;
+
+    };
+
+    function iterateOverRows(flatListOfElements,row,layer,map,tilesets) {
+
+      var tiles = [];
+      flatListOfElements.slice(0,map.width).forEach(function(column,index) {
+
+            // calculate the x and y position for a the tile we are going to create
+            var twoDPoint = {}, tile;
+            twoDPoint.x = ( index - row ) * map.tilewidth/2;
+            twoDPoint.y = ( index + row ) * map.tileheight/2;
+
+            //console.log(twoDPoint.y + " = ( "+ index + " + " + row + ") * " + map.tileheight/2);
+
+            // get a tile specification that hold information about what image ( tileset image ) to use and
+            // what cordinates in that tileset to use to create the tile
+            var tileSpecification = retriveTileSpecification(column,tilesets);
+
+            // draw the tile on the canvas if it exists
+            if(tileSpecification)
+              tile = placeTile.call(this,tileSpecification,twoDPoint);
+
+            tiles.push(tile);
+
+        }.bind(this));
+
+        // continue with next row ( if there are any )
+        if(flatListOfElements.length >= map.width) {
+
+            var existingRows = iterateOverRows.call(this,flatListOfElements.slice(map.width),row+1,layer,map,tilesets);
+            existingRows.unshift(tiles);
+            return existingRows;
+
+        } else {
+
+            var rows = [];
+            return rows;
+
+        }
+
+    };
+
+    /**
+    * gives you a tilespecification based on the gid
+    * @param gid the specific tileid used as query
+    * @param tilesets all the tilesets to search through
+    * @return a object with the tileset used and the x and y posistions insside that tileset
+    **/
+    function retriveTileSpecification(gid,tilesets) {
+
+        var tileset = getTileSetByUid(gid,tilesets);
+
+
+        if(tileset === undefined)
+            return undefined;
+
+        var rebasedgid = gid - tileset.firstgid +1;
 
         var numberOfTilesInARow = tileset.imagewidth/tileset.tilewidth;
-        console.log(column + " -> " +"x" +getXPos(column,numberOfTilesInARow,tileset.tilewidth) + ", y" + getYPos(column,numberOfTilesInARow,tileset.tileheight,0));
         return {
             "tileset": tileset,
-            "x":getXPos(column,numberOfTilesInARow,tileset.tilewidth),
-            "y":getYPos(column,numberOfTilesInARow,tileset.tileheight,0)
+            "x":getXPos(rebasedgid,numberOfTilesInARow,tileset.tilewidth),
+            "y":getYPos(rebasedgid,numberOfTilesInARow,tileset.tileheight,0)
         };
     };
+    /**
+    *
+    * gives the Y cordinate for the given gid.
+    *
+    * @param gid
+    * @param numberOfTilesInARow the layers rowLenght in tiles
+    * @param tileheight the height of the tiles
+    * @param rowsCollected start index
+    * @return y cordinate
+    **/
+    function getYPos(gid,numberOfTilesInARow,tileheight,rowsCollected) {
 
-    function getYPos(column,numberOfTilesInARow,tileheight,rowsCollected) {
-
-        if(column < numberOfTilesInARow) {
-
+        if(gid < numberOfTilesInARow)
             return rowsCollected * tileheight;
+         else
+            return getYPos(gid - numberOfTilesInARow, numberOfTilesInARow,tileheight,rowsCollected+1);
 
-        } else {
+    };
+    /**
+    * Gives the X position for a gid
+    * @param gid the gid that we want to know the x position
+    * @param numberOfTilesInARow the row size in the layer
+    * @param the tilewidth for the tiles in the map
+    **/
+    function getXPos(gid,numberOfTilesInARow,tilewidth) {
 
-            return getYPos(column - numberOfTilesInARow, numberOfTilesInARow,tileheight,rowsCollected+1);
-        }
+        if(gid < numberOfTilesInARow)
+            return (gid * tilewidth) - tilewidth;
+        else
+            return getXPos(gid - numberOfTilesInARow,numberOfTilesInARow,tilewidth);
 
     };
 
-    function getXPos(column,numberOfTilesInARow,tilewidth) {
-
-        if(column < numberOfTilesInARow) {
-
-            return (column * tilewidth) - tilewidth;
-
-        } else {
-
-            return getXPos(column - numberOfTilesInARow,numberOfTilesInARow,tilewidth);
-
-        }
-    };
-
-    function twoDToIso(pt){
-
-        var tempPt = {};
-        tempPt.x = pt.x - pt.y;
-        tempPt.y = (pt.x + pt.y) / 2;
-        return tempPt;
-
-    };
-
-    function isoTo2D(pt) {
-        var tempPt = {};
-        tempPt.x = (2 * pt.y + pt.x) / 2;
-        tempPt.y = (2 * pt.y - pt.x) / 2;
-        return tempPt;
-    }
-
-    function renderImage(canvas,x, y) {
-      c.drawImage(img, ox + (x - y) * spriteWidth/2, oy + (y + x) * gridHeight/2-(spriteHeight-gridHeight),spriteWidth,spriteHeight)
-    }
-
-    function convertFlatPointToIsometric() {
-
-        return {
-          "x":"123",
-          "y":"1233"
-        }
-    };
-
-    function createTile(tileSpecification) {
-
-
-    };
-
+    /**
+    * creates a rectangle ( tile )
+    * draws the image described by the tileSpecification
+    * @return void
+    **/
     function placeTile(tileSpecification, isometricPoint) {
 
+        if(tileSpecification.tileset.name ==="grassland_trees")
+          console.log("here!");
+        var crop = new createjs.Bitmap(tileSpecification.tileset.image);
+      // [x=0]  [y=0]  [width=0]  [height=0]
+        crop.sourceRect = new createjs.Rectangle(
+        tileSpecification.x,
+        tileSpecification.y,
+        tileSpecification.tileset.tilewidth,
+        tileSpecification.tileset.tileheight);
+        session.getStage().addChild(crop);
+        crop.y = isometricPoint.y;
+        crop.x = isometricPoint.x;
+        return {
+            "tileSpecification":tileSpecification,
+            "displayElement": crop
+        }
 
-    };
-
-    function selectTileset(name) {
-
-      return this.tiledMap.tilesets.filter(function(e) {
-          return e.name === name;
-      })[0];
-
-    };
-    function selectLayer(layerName) {
-        return this.tiledMap.layers.filter(function(e) {
-            return e.name === layerName;
-        })[0];
     };
     return IsometricMap;
 });

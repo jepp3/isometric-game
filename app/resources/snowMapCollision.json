@@ -26,15 +26,26 @@
         {
          "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 162, 0, 0, 0, 0, 0, 0, 0, 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 162, 0, 0, 0, 0, 0, 0, 0, 0, 161, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
          "height":10,
-         "name":"Tile Layer 3",
+         "name":"air",
          "opacity":1,
          "type":"tilelayer",
          "visible":true,
          "width":10,
          "x":0,
          "y":0
+        },
+        {
+         "data":[0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 197, 197, 0, 0, 0, 197, 0, 0, 0, 0, 197, 197, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197, 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 197, 197, 0, 0, 0, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 197],
+         "height":10,
+         "name":"rules",
+         "opacity":0.550000011920929,
+         "type":"tilelayer",
+         "visible":true,
+         "width":10,
+         "x":0,
+         "y":0
         }],
- "nextobjectid":1,
+ "nextobjectid":66,
  "orientation":"isometric",
  "properties":
     {
@@ -75,6 +86,22 @@
          "spacing":0,
          "tilecount":64,
          "tileheight":128,
+         "tilewidth":64
+        },
+        {
+         "firstgid":193,
+         "image":"resources/set_rules.png",
+         "imageheight":128,
+         "imagewidth":128,
+         "margin":0,
+         "name":"rules",
+         "properties":
+            {
+
+            },
+         "spacing":0,
+         "tilecount":8,
+         "tileheight":32,
          "tilewidth":64
         }],
  "tilewidth":64,

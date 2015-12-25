@@ -1,5 +1,6 @@
 require.config({
     paths: {
+        easel:"../bower_components/EaselJS/lib/easeljs-0.8.2.min",
         jquery: '../bower_components/jquery/jquery',
         text : '../bower_components/requirejs-plugins/lib/text', //text is required
         json : '../bower_components/requirejs-plugins/src/json', //alias to plugin
@@ -19,6 +20,9 @@ require.config({
     shim: {
         bootstrapAffix: {
             deps: ['jquery']
+        },
+        easel: {
+            exports: 'createjs'
         },
         bootstrapAlert: {
             deps: ['jquery', 'bootstrapTransition']
