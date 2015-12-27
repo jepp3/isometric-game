@@ -1,10 +1,10 @@
-define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","utils/CanvasSingleton","utils/MapWalker","utils/IsometricMapDrawer","utils/Session","easel"],function(map,IsometricMap,canvas,MapWalker,IsometricMapDrawer,session,createjs) {
+define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","utils/CanvasSingleton","utils/MapHandler","utils/Session","easel"],function(map,IsometricMap,canvas,MapHandler,session,createjs) {
 
 
-  var KEYCODE_LEFT = 37,
-              KEYCODE_RIGHT = 39,
-              KEYCODE_UP = 38,
-              KEYCODE_DOWN = 40;
+  var KEYCODE_LEFT = 65,
+      KEYCODE_RIGHT = 68,
+      KEYCODE_UP = 87,
+      KEYCODE_DOWN = 83;
 
 
 
@@ -15,20 +15,30 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
   down;
 
   var LoadingScreen = function(options) {
-
       this.options = options;
 
   };
 
   LoadingScreen.prototype.start = function() {
 
-    console.log(map);
       var stage = new createjs.Stage(canvas);
       stage.x = 300;
       stage.y = 100;
-
       session.setStage(stage);
-
+      stage.on("click",function(ev) {
+        var t = stage.globalToLocal(ev.stageX,ev.stageY);
+        var e = {
+          "x":t.x - 32,
+          "y":t.y - 96
+        };
+        var destination = MapHandler.pixleCordinatesToIsometricCordinates(e);
+        var source = {
+          "x":4,
+          "y":3
+        };
+        var shortestPath = MapHandler.shortestPath(this.stupidMap[3],source,destination);
+        console.log(shortestPath);
+      }.bind(this));
       createjs.Ticker.addEventListener("tick", tick.bind(this)); // todo: remove me, this should be made in the screen
 
       loadMap.call(this);
@@ -38,30 +48,21 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
       this.fakeCharacter = createFakeCharacter();
 
       // place the fake character at position 0,0
-
-      var pixleCordinates = MapWalker.IsometricCordinatesToPixelCordinates({
-        "x":0,
-        "y":0
-      });
-
+      var startingPoint = {
+        "x":4,
+        "y":3
+      };
+      var pixleCordinates = MapHandler.isometricCordinatesToPixelCordinates(startingPoint);
 
 
       this.fakeCharacter.x = pixleCordinates.x;
       this.fakeCharacter.y = pixleCordinates.y;
 
-      var mapTile = MapWalker.getAt(this.stupidMap[1],{
-        "x":0,
-        "y":1
-      }).displayElement;
 
+      // add the character to the stage , we will deep sort it in a second
+      session.getStage().addChild(this.fakeCharacter);
 
-      var index = session.getStage().getChildIndex(mapTile);
-      session.getStage().addChildAt(this.fakeCharacter,index);
-      session.getStage().swapChildren(this.fakeCharacter,mapTile);
-
-
-
-
+      updateCharacterDeepSorting.call(this);
       /*Connecting keydown input to keyPressed handler*/
       document.onkeydown = keyPressed;
                  /*Connecting key up event to keyUp handler*/
@@ -118,50 +119,71 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
 
 
   function tick() {
+      var speed = 1.8;
+      var pointer = {
+        "x":this.fakeCharacter.x,
+        "y":this.fakeCharacter.y
+      };
+      var update = false;
 
       if(left) {
-        this.fakeCharacter.x-=0.8;
-
-        updateCharacterDeepSorting.call(this);
-
+        pointer.x-=speed;
+        update = true;
       } else if(right) {
-
-        this.fakeCharacter.x+=0.8;
-        updateCharacterDeepSorting.call(this);
-
+        pointer.x+=speed;
+        update = true;
       } else if (down) {
-        this.fakeCharacter.y+=0.8;
-        updateCharacterDeepSorting.call(this);
+        pointer.y+=speed;
+        update = true;
       } else if( up) {
-        this.fakeCharacter.y-=0.8;
-        updateCharacterDeepSorting.call(this);
+        pointer.y-=speed;
+        update = true;
       }
+
+      if(checkForCollisions.call(this,pointer) == false && update === true) {
+
+        this.fakeCharacter.x = pointer.x;
+        this.fakeCharacter.y = pointer.y;
+
+        updateCharacterDeepSorting.call(this);
+
+      //  session.getStage().update();
+
+      } else {
+      //  console.log("collisions")
+      }
+
+      session.getStage().update();
 
 
 
   };
 
+
+  function checkForCollisions(pointer) {
+
+    return MapHandler.collisionDetect(this.stupidMap[3],pointer);
+  };
+
+
+
   function updateCharacterDeepSorting() {
 
-    var isometricCordinates = MapWalker.pixleCordinatesToIsometricCordinates({
+    var isometricCordinates = MapHandler.pixleCordinatesToIsometricCordinates({
       "x":this.fakeCharacter.x,
-      "y":this.fakeCharacter.y +16
+      "y":this.fakeCharacter.y
     });
 
-    var rule = MapWalker.getAt(this.stupidMap[3],isometricCordinates);
-    if(rule) {
-        console.log("collision!! of type " + rule.type);
-    }
 
     var foundTileObject =  undefined;
 
-    if(MapWalker.displayElementExistsAt(this.stupidMap[1],isometricCordinates)) {
+    if(MapHandler.displayElementExistsAt(this.stupidMap[1],isometricCordinates)) {
 
-        foundTileObject = MapWalker.getAt(this.stupidMap[1],isometricCordinates);
+        foundTileObject = MapHandler.getAt(this.stupidMap[1],isometricCordinates);
 
     } else {
 
-        foundTileObject = MapWalker.getPrevWithDisplayElement(this.stupidMap[1],isometricCordinates);
+        foundTileObject = MapHandler.getPrevWithDisplayElement(this.stupidMap[1],isometricCordinates);
 
     }
       //if(userStandingOnObj === undefined || userStandingOnObj.displayElement === undefined) {
@@ -170,27 +192,24 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
         // there are tiles before me, so
 
         console.log("standing at" + JSON.stringify(isometricCordinates) + " and cant do a thing");
-        session.getStage().update();
+      //  session.getStage().update();
 
-        return;
+
+    } else {
+
+      // firstly remove the character  ( we dont want to create any inconsistency with the indexes)
+      session.getStage().removeChild(this.fakeCharacter)
+
+      // get the index of the tile
+      var index = session.getStage().getChildIndex(foundTileObject.displayElement);
+
+      // add our character at that given position , will force everything above to increase there index
+      session.getStage().addChildAt(this.fakeCharacter,index);
+
+      // our character currently is located under the tile, swap them.
+      session.getStage().swapChildren(this.fakeCharacter,foundTileObject.displayElement);
+
     }
-
-    // firstly remove the character  ( we dont want to create any inconsistency with the indexes)
-    session.getStage().removeChild(this.fakeCharacter)
-
-    // get the index of the tile
-    var index = session.getStage().getChildIndex(foundTileObject.displayElement);
-
-    // add our character at that given position , will force everything above to increase there index
-    session.getStage().addChildAt(this.fakeCharacter,index);
-
-    // our character currently is located under the tile, swap them.
-    session.getStage().swapChildren(this.fakeCharacter,foundTileObject.displayElement);
-
-
-    // redraw the map
-    session.getStage().update();
-
 
   }
 
@@ -214,11 +233,10 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
   };
 
   function createFakeCharacter() {
+
       var tileSpecification = { x: 768, y: 896};
 
-
-
-      var crop = new createjs.Bitmap("resources/user.png");
+      var crop = new createjs.Bitmap("resources/user1.png");
     // [x=0]  [y=0]  [width=0]  [height=0]
       crop.sourceRect = new createjs.Rectangle(
       0,
@@ -232,22 +250,6 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
 
   }
 
-   function deepSort() {
-     var pixelCordinates = {
-       "x":this.fakeCharacter.x,
-       "y":this.fakeCharacter.y
-     };
-  //   var isometricCordinates = MapWalker.pixleCordinatesToIsometricCordinates(pixelCordinates);
-
-   };
-
-
-  /**
-  * load the assets from the backen, so we know what images
-  **/
-  function loadAssets() {
-
-  };
 
   return LoadingScreen;
 

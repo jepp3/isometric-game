@@ -1,4 +1,4 @@
-define(["easel","utils/Session","utils/MapWalker"],function(createjs,session,MapWalker){
+define(["easel","utils/Session","utils/MapHandler"],function(createjs,session,MapHandler){
 
 
     /**
@@ -42,7 +42,6 @@ define(["easel","utils/Session","utils/MapWalker"],function(createjs,session,Map
               table.push(iterateOverRows.call(this,layer.data,0,layer,this.tiledMap,this.tiledMap.tilesets));
 
             }
-            console.log(table)
 
         }.bind(this));
 
@@ -153,7 +152,6 @@ define(["easel","utils/Session","utils/MapWalker"],function(createjs,session,Map
             var twoDPoint = {}, tile;
             twoDPoint.x = ( index - row ) * map.tilewidth/2;
             twoDPoint.y = ( index + row ) * map.tileheight/2;
-
             //console.log(twoDPoint.y + " = ( "+ index + " + " + row + ") * " + map.tileheight/2);
 
             // get a tile specification that hold information about what image ( tileset image ) to use and
@@ -247,8 +245,6 @@ define(["easel","utils/Session","utils/MapWalker"],function(createjs,session,Map
     **/
     function placeTile(tileSpecification, isometricPoint) {
 
-        if(tileSpecification.tileset.name ==="grassland_trees")
-          console.log("here!");
         var crop = new createjs.Bitmap(tileSpecification.tileset.image);
       // [x=0]  [y=0]  [width=0]  [height=0]
         crop.sourceRect = new createjs.Rectangle(

@@ -14,7 +14,7 @@
  <tileset firstgid="193" name="rules" tilewidth="64" tileheight="32" tilecount="8">
   <image source="../../flare-game/tiled/grassland/set_rules.png" width="128" height="128"/>
  </tileset>
- <layer name="ground" width="10" height="10">
+ <layer name="ground" width="10" height="10" visible="0">
   <data encoding="csv">
 24,24,24,24,24,24,24,24,24,24,
 24,24,24,24,24,24,24,24,24,24,
@@ -28,7 +28,7 @@
 24,24,24,24,24,24,24,24,24,24
 </data>
  </layer>
- <layer name="objects_on_the_grond" width="10" height="10">
+ <layer name="objects_on_the_grond" width="10" height="10" visible="0">
   <data encoding="csv">
 0,58,109,110,0,111,0,0,0,0,
 86,57,0,112,0,123,0,0,0,0,

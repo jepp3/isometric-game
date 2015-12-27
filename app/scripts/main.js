@@ -4,6 +4,7 @@ require.config({
         jquery: '../bower_components/jquery/jquery',
         text : '../bower_components/requirejs-plugins/lib/text', //text is required
         json : '../bower_components/requirejs-plugins/src/json', //alias to plugin
+        astar: '../bower_components/astar/astar',
         bootstrapAffix: '../bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/affix',
         bootstrapAlert: '../bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/alert',
         bootstrapButton: '../bower_components/bootstrap-sass/vendor/assets/javascripts/bootstrap/button',
@@ -64,7 +65,6 @@ require(['game', 'jquery'], function (Game, $) {
     'use strict';
     // use app here
     var game = new Game();
-    console.log(game);
 
     game.init();
     console.log('Running jQuery %s', $().jquery);
