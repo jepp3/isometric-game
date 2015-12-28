@@ -8,14 +8,6 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
     };
 
     /**
-    * Sets the stage for the application
-    */
-    MovableHelper.prototype.moveCharacter = function(isometricDestinationPoint) {
-
-
-    };
-
-    /**
     *
     **/
     MovableHelper.prototype.attachTo = function(isometricCordinates) {
@@ -29,12 +21,11 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
     };
 
     MovableHelper.prototype.goTo = function(isometricDestination) {
-        console.log(isometricDestination)
+
         var source = MapHandler.pixleCordinatesToIsometricCordinates(this.movable);
         this.movmentList = MapHandler.shortestPath(session.getMap()[3],source,isometricDestination);
         this.movmentList.unshift(source);
-        console.log(this.movmentList);
-
+        
     };
 
     MovableHelper.prototype.update = function(character) {
@@ -50,7 +41,7 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
             return;
         }
         var update = true;
-        var speed = 1.8;
+        var speed = this.speed;
         var subPath = this.movmentList[1];
         var subPathPixleCordinates = MapHandler.isometricCordinatesToPixelCordinates(subPath);
         var orientation = checkOrientation(this.movmentList[0],this.movmentList[1]);
@@ -106,21 +97,15 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
 
       var foundTileObject =  undefined;
 
-      if(MapHandler.displayElementExistsAt(session.getMap()[1],isometricCordinates)) {
-
+      if(MapHandler.displayElementExistsAt(session.getMap()[1],isometricCordinates))
           foundTileObject = MapHandler.getAt(session.getMap()[1],isometricCordinates);
-
-      } else {
-
+      else
           foundTileObject = MapHandler.getPrevWithDisplayElement(session.getMap()[1],isometricCordinates);
-
-      }
 
       if(foundTileObject === undefined || foundTileObject.displayElement === undefined) {
           // there are tiles before me, so
 
           console.log("standing at" + JSON.stringify(isometricCordinates) + " and cant do a thing");
-        //  session.getStage().update();
 
 
       } else {
