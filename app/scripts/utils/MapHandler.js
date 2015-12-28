@@ -62,7 +62,7 @@ define(["astar"],function(Astar) {
 
           return {
             "x": startPoint.x,
-            "y": startPoint.y - 1
+            "y": startPoint.y + 1
           };
 
     };
@@ -74,7 +74,7 @@ define(["astar"],function(Astar) {
 
           return {
             "x": startPoint.x,
-            "y": startPoint.y + 1
+            "y": startPoint.y - 1
           };
 
     };
@@ -86,7 +86,7 @@ define(["astar"],function(Astar) {
     MapHandler.east = function (startPoint) {
 
           return {
-            "x": startPoint.x +1,
+            "x": startPoint.x - 1,
             "y": startPoint.y
           };
 
@@ -99,11 +99,17 @@ define(["astar"],function(Astar) {
     MapHandler.west = function (startPoint) {
 
           return {
-            "x": startPoint.x -1,
+            "x": startPoint.x + 1,
             "y": startPoint.y
           };
 
     };
+
+
+    MapHandler.cordinatesSame = function ( a, b ){
+        return a.x === b.x && a.y === b.y;
+    }
+
 
     /**
     * Converts pixel cordinates to isometric cordinates.
@@ -189,7 +195,6 @@ define(["astar"],function(Astar) {
         var astarGridCells = [];
         row.forEach(function(cell){
 
-          //    console.log(cell);
               if(cell !== undefined) {
                 astarGridCells.push(0); // infinit
               } else {
@@ -203,11 +208,34 @@ define(["astar"],function(Astar) {
     });
 
     var graph = new Astar.Graph(astarGrid);
-    var start = graph.grid[4][3];
-    var end = graph.grid[isometricDestination.x][isometricDestination.y];
-    var result = Astar.astar.search(graph, start, end);
-    // todo: convert to isometric points
+    var start = graph.grid[isometricSource.y][isometricSource.x];
+    var end = graph.grid[isometricDestination.y][isometricDestination.x];
+
+    var result = convertResultToIsometricPoints(Astar.astar.search(graph, start, end));
     return result;
+
+  };
+
+
+  MapHandler.copyCordinates = function(source, destination) {
+
+      destination.x = source.x;
+      destination.y = source.y;
+
+  };
+
+  function convertResultToIsometricPoints(result) {
+      var listOfIsometricPoints = [];
+
+      result.forEach(function(gridPoint){
+            listOfIsometricPoints.push({
+              "x":gridPoint.y,
+              "y":gridPoint.x
+            });
+
+      });
+
+      return listOfIsometricPoints;
   };
 
   return MapHandler;

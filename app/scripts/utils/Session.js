@@ -18,8 +18,18 @@ define([],function() {
         return this.stage;
     };
 
+    Session.prototype.setMap = function(map) {
+
+        this.map = map;
+    };
+
+    Session.prototype.getMap = function() {
+
+        return this.map;
+
+    };
+
     // make it a singleton
-    
     return new Session();
 
 });
