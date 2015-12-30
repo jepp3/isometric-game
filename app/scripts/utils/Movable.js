@@ -1,4 +1,6 @@
-define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
+define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandler,session,Printable) {
+
+
 
     MovableHelper = function(movable) {
 
@@ -8,32 +10,47 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
     };
 
     /**
-    *
+    * Attaches the element to the map
+    * @param isometric cordinate for the location
     **/
     MovableHelper.prototype.attachTo = function(isometricCordinates) {
 
-        var pixleCordinates = MapHandler.isometricCordinatesToPixelCordinates(isometricCordinates);
-
-        MapHandler.copyCordinates(pixleCordinates,this.movable);
-        session.getStage().addChild(this.movable);
+        Printable.attachTo(this.movable,isometricCordinates);
         updateCharacterDeepSorting.call(this);
 
     };
 
+    /**
+    * Removes the  movable from the screen.
+    **/
+    MovableHelper.prototype.destroy = function() {
+
+        Printable.destroy(this.movable);
+
+    };
+    /**
+    * Moves the character to the given point.
+    *
+    * @param isometricDestination where to move the character
+    **/
     MovableHelper.prototype.goTo = function(isometricDestination) {
 
         var source = MapHandler.pixleCordinatesToIsometricCordinates(this.movable);
         this.movmentList = MapHandler.shortestPath(session.getMap()[3],source,isometricDestination);
         this.movmentList.unshift(source);
-        
+
     };
 
+    /**
+    * Update movments sprites and so on.
+    *
+    **/
     MovableHelper.prototype.update = function(character) {
 
         move.call(this);
 
     };
-
+    //TODO: fix suport for spam clicking
     function move() {
 
         if(this.movmentList.length < 2) {
@@ -102,13 +119,7 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
       else
           foundTileObject = MapHandler.getPrevWithDisplayElement(session.getMap()[1],isometricCordinates);
 
-      if(foundTileObject === undefined || foundTileObject.displayElement === undefined) {
-          // there are tiles before me, so
-
-          console.log("standing at" + JSON.stringify(isometricCordinates) + " and cant do a thing");
-
-
-      } else {
+      if(foundTileObject !== undefined && foundTileObject.displayElement !== undefined) {
 
         // firstly remove the character  ( we dont want to create any inconsistency with the indexes)
         session.getStage().removeChild(this.movable)
