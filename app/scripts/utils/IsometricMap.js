@@ -152,7 +152,6 @@ define(["easel","utils/Session","utils/MapHandler"],function(createjs,session,Ma
             var twoDPoint = {}, tile;
             twoDPoint.x = ( index - row ) * map.tilewidth/2;
             twoDPoint.y = ( index + row ) * map.tileheight/2;
-            //console.log(twoDPoint.y + " = ( "+ index + " + " + row + ") * " + map.tileheight/2);
 
             // get a tile specification that hold information about what image ( tileset image ) to use and
             // what cordinates in that tileset to use to create the tile
@@ -196,7 +195,8 @@ define(["easel","utils/Session","utils/MapHandler"],function(createjs,session,Ma
         if(tileset === undefined)
             return undefined;
 
-        var rebasedgid = gid - tileset.firstgid +1;
+
+        var rebasedgid = gid - tileset.firstgid;
 
         var numberOfTilesInARow = tileset.imagewidth/tileset.tilewidth;
         return {
@@ -231,11 +231,10 @@ define(["easel","utils/Session","utils/MapHandler"],function(createjs,session,Ma
     **/
     function getXPos(gid,numberOfTilesInARow,tilewidth) {
 
-        if(gid < numberOfTilesInARow)
-            return (gid * tilewidth) - tilewidth;
-        else
-            return getXPos(gid - numberOfTilesInARow,numberOfTilesInARow,tilewidth);
-
+          var totalLength = numberOfTilesInARow * tilewidth;
+          var gidLength = gid * tilewidth;
+          var rem = gidLength % totalLength;
+          return rem;
     };
 
     /**
@@ -252,13 +251,16 @@ define(["easel","utils/Session","utils/MapHandler"],function(createjs,session,Ma
         tileSpecification.y,
         tileSpecification.tileset.tilewidth,
         tileSpecification.tileset.tileheight);
-        session.getStage().addChild(crop);
+        session.getMapContainer().addChild(crop);
         crop.y = isometricPoint.y;
         crop.x = isometricPoint.x;
         return {
             "tileSpecification":tileSpecification,
             "displayElement": crop
         }
+
+        crop.cache(0,0,64, 128);
+
 
     };
     return IsometricMap;

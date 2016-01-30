@@ -1,4 +1,4 @@
-define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","utils/CanvasSingleton","utils/MapHandler","utils/Session","easel","utils/Movable","logic/Cursor"],function(map,IsometricMap,canvas,MapHandler,session,createjs,MovableCharacter,SelectArea) {
+define(["json!./../../resources/snowMapPerformanceTest.json","utils/IsometricMap","utils/CanvasSingleton","utils/MapHandler","utils/Session","easel","utils/Movable","logic/Cursor"],function(map,IsometricMap,canvas,MapHandler,session,createjs,MovableCharacter,SelectArea) {
 
 
   var KEYCODE_LEFT = 65,
@@ -13,18 +13,21 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
   };
 
   LoadingScreen.prototype.start = function() {
-
+    this.ii = 0;
       var stage = new createjs.Stage(canvas);
       stage.x = 300;
       stage.y = 100;
       stage.cursor = 'default';
-
       stage.enableMouseOver(20)
       session.setStage(stage);
+
+      createjs.Ticker.timingMode = createjs.Ticker.RAF_SYNCHED;
+      createjs.Ticker.setFPS(30);
       createjs.Ticker.addEventListener("tick", tick.bind(this)); // todo: remove me, this should be made in the screen
 
-
-
+      var mapContainer  = new createjs.Container();
+      session.setMapContainer(mapContainer);
+      stage.addChild(mapContainer);
       var isometricMap = new IsometricMap();
       session.setMap(isometricMap.printOutTilesOnCanvas(map));
       resizeCanvas(canvas);
@@ -41,9 +44,24 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
         "x":4,
         "y":3
       });
-
-      this.listOfSelectedCharacters = [];
       this.listOfCharacters  = [];
+
+
+      for(var i = 0; i < 20; i ++) {
+
+        var p = new MovableHelper(createFakeCharacter());
+        p.attachTo({
+          "x":4 + i ,
+          "y":0
+        });
+
+        this.listOfCharacters.push(p);
+        session.getMovableObjects().push(p);
+
+      }
+      this.listOfSelectedCharacters = [];
+      session.getMovableObjects().push(player);
+      session.getMovableObjects().push(player1);
       this.listOfCharacters.push(player);
       this.listOfCharacters.push(player1);
 
@@ -58,12 +76,13 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
                   var cordinates = e.movable;
                   var bound = e.movable.getBounds();
                   var rectArea = {
-                    "x":cordinates.x,
-                    "y":cordinates.y,
                     "height":32, // observe that this is set to a custom value
                     "width":bound.width
                   };
-                    console.log(this)
+
+                  // make the cordinates to global, these are needed for the comparison
+                  e.movable.localToGlobal(bound.x, bound.y+96,rectArea);
+
                   if(this.selectArea.checkIntersection(rectArea)) {
                       this.listOfSelectedCharacters.push(e);
                   }
@@ -73,22 +92,63 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
           }.bind(this)
       });
 
+      document.onkeydown = keyPressed;
+
+      session.updateOfCanvasNeeded()
+
   };
+
+  function keyPressed(event) {
+    var speed = 17;
+    var m = session.getMapContainer();
+  //
+
+    switch(event.keyCode) {
+  			case KEYCODE_LEFT:
+          session.updateOfCanvasNeeded()
+  				m.x += speed;
+  				break;
+  			case KEYCODE_RIGHT:
+          session.updateOfCanvasNeeded()
+  				m.x -= speed;
+  				break;
+  			case KEYCODE_UP:
+          session.updateOfCanvasNeeded()
+  				m.y += speed;
+  				break;
+  			case KEYCODE_DOWN:
+          session.updateOfCanvasNeeded()
+  				m.y -= speed;
+  				break;
+
+  		}
+
+  };
+
+
 
   function addEventListnersForStage() {
 
       session.getStage().on("click",onMouseClick.bind(this));
+
+      window.addEventListener('resize', resizeCanvas, false);
+
   };
 
   function onMouseClick (ev) {
 
       var stage = session.getStage();
-      var rawMousePointer = stage.globalToLocal(ev.stageX,ev.stageY);
+      // first make the location global
+      var rawMousePointer = stage.localToGlobal(ev.stageX,ev.stageY);
+
+      // convert the global to map positions
+      rawMousePointer =session.getMapContainer().globalToLocal(ev.stageX,ev.stageY);
 
       var mousePointer = {
         "x":rawMousePointer.x - 32,
         "y":rawMousePointer.y - 96
       };
+      console.log(ev.stageX,ev.stageY);
       var destination = MapHandler.pixleCordinatesToIsometricCordinates(mousePointer);
       this.listOfSelectedCharacters.forEach(function(e) {
 
@@ -100,23 +160,32 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
 
   function tick() {
 
+      if(session.isUpdateofCanvasNeeded()) {
+    //    console.log("canvas updated");
+          session.getStage().update();
+          session.updateOfCanvasNotNeeded();
+      }
 
       this.listOfCharacters.forEach(function(e) {
 
           e.update();
 
       }.bind(this));
+      if(this.ii === 100) {
+          console.log(Math.round(createjs.Ticker.getMeasuredFPS()) + " fps");
 
-      session.getStage().update();
+          this.ii = 0;
+      }
+      this.ii++;
 
   };
 
 
-  function resizeCanvas(canvas) {
+  function resizeCanvas() {
 
-      canvas.width = 700;//window.outerWidth;    //ie8>= doesn't have innerWidth/Height
-      canvas.height =700;//window.outerHeight;  //but they don't have canvas
-
+      session.getStage().canvas.width = window.innerWidth;
+      session.getStage().canvas.height = window.innerHeight;
+      session.updateOfCanvasNeeded();
   };
 
   function createFakeCharacter() {
@@ -133,6 +202,7 @@ define(["json!./../../resources/snowMapCollision.json","utils/IsometricMap","uti
       64,
       128);
       console.log(crop.width)
+
       return crop;
   }
 

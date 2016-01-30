@@ -53,6 +53,11 @@ define(["astar"],function(Astar) {
 
     };
 
+    MapHandler.setValue = function(layer,point,value) {
+
+        layer[point.y][point.x] = value;
+
+    };
 
     /**
     * Returns isometric point to a south position
@@ -186,6 +191,20 @@ define(["astar"],function(Astar) {
 
   };
 
+  MapHandler.generateFluidCollisionLayer = function(collisionLayer,fluidCollisionPoints) {
+
+        var copyOfArray = collisionLayer.map(function(arr) {
+          return arr.slice();
+        });
+        fluidCollisionPoints.forEach(function(fluidPoint) {
+
+            if(MapHandler.existsAt(copyOfArray,fluidPoint) === false)
+              MapHandler.setValue(copyOfArray,fluidPoint,{"type":"MOVING_OBJECT"});
+
+        });
+        return copyOfArray;
+  };
+
   MapHandler.shortestPath =  function(collisionLayer,isometricSource, isometricDestination) {
 
 
@@ -198,6 +217,7 @@ define(["astar"],function(Astar) {
               if(cell !== undefined) {
                 astarGridCells.push(0); // infinit
               } else {
+
                 astarGridCells.push(1); // normal weight
               }
 

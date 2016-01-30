@@ -16,7 +16,7 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
         var pixleCordinates = MapHandler.isometricCordinatesToPixelCordinates(isometricCordinates);
 
         MapHandler.copyCordinates(pixleCordinates,canvasObject);
-        session.getStage().addChild(canvasObject);
+        session.getMapContainer().addChild(canvasObject);
 
     };
 
@@ -25,7 +25,7 @@ define(["utils/MapHandler","utils/Session"],function(MapHandler,session) {
     **/
     PrintableHelper.destroy = function(canvasObject) {
 
-        session.getStage().removeChild(canvasObject);
+        session.getMapContainer().removeChild(canvasObject);
 
     };
 

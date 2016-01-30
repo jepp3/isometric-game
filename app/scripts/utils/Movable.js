@@ -35,9 +35,10 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
     **/
     MovableHelper.prototype.goTo = function(isometricDestination) {
 
-        var source = MapHandler.pixleCordinatesToIsometricCordinates(this.movable);
-        this.movmentList = MapHandler.shortestPath(session.getMap()[3],source,isometricDestination);
-        this.movmentList.unshift(source);
+
+      this.isometricDestination = isometricDestination;
+
+      updateMovmentList.call(this,this.movable);
 
     };
 
@@ -47,67 +48,150 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
     **/
     MovableHelper.prototype.update = function(character) {
 
-        move.call(this);
+      if(this.movmentList.length >= 2) {
+          //session.getMapContainer().update();
+
+          move.call(this);
+      }
+
 
     };
+
+
     //TODO: fix suport for spam clicking
     function move() {
 
-        if(this.movmentList.length < 2) {
-            //session.getStage().update();
-            return;
-        }
-        var update = true;
+
+    //  updateMovmentList.call(this,c);
+    var switchedSource = false;
         var speed = this.speed;
-        var subPath = this.movmentList[1];
-        var subPathPixleCordinates = MapHandler.isometricCordinatesToPixelCordinates(subPath);
+        var subPathPixleCordinates = MapHandler.isometricCordinatesToPixelCordinates(this.movmentList[1]);
         var orientation = checkOrientation(this.movmentList[0],this.movmentList[1]);
         var c = getMoveCordinates(this.movable,orientation,speed);
 
-        if(orientation === "standStill")
-            update = false;
+        if(orientation === "standStill") {
+              return;
+        }
+
 
         if(orientation === "south") {
 
             if(c.y >= subPathPixleCordinates.y && c.x <= subPathPixleCordinates.x) {
-                MapHandler.copyCordinates(subPathPixleCordinates,c);
-                this.movmentList.shift();
+                MapHandler.copyCordinates(subPathPixleCordinates,this.movable);
+                updateMovmentList.call(this,subPathPixleCordinates);
+                switchedSource = true;
             }
 
         } else if(orientation === "west") {
 
           if(c.y >= subPathPixleCordinates.y && c.x >= subPathPixleCordinates.x) {
-              MapHandler.copyCordinates(subPathPixleCordinates,c);
-              this.movmentList.shift();
+            MapHandler.copyCordinates(subPathPixleCordinates,this.movable);
+              updateMovmentList.call(this,subPathPixleCordinates);
+              switchedSource = true;
           }
 
         } else if(orientation === "north") {
 
           if(c.y <= subPathPixleCordinates.y && c.x >= subPathPixleCordinates.x) {
-              MapHandler.copyCordinates(subPathPixleCordinates,c);
-              this.movmentList.shift();
+              MapHandler.copyCordinates(subPathPixleCordinates,this.movable);
+              updateMovmentList.call(this,subPathPixleCordinates);
+              switchedSource = true;
           }
 
         } else if(orientation === "east") {
 
           if(c.y <= subPathPixleCordinates.y && c.x <= subPathPixleCordinates.x) {
-              MapHandler.copyCordinates(subPathPixleCordinates,c);
-              this.movmentList.shift();
+              MapHandler.copyCordinates(subPathPixleCordinates,this.movable);
+              updateMovmentList.call(this,subPathPixleCordinates);
+              switchedSource = true;
           }
 
         }
 
-        if(update === true) {
 
-          this.movable.x = c.x;
-          this.movable.y = c.y;
-
-          updateCharacterDeepSorting.call(this);
-
+        if(switchedSource == false) {
+          MapHandler.copyCordinates(c,this.movable)
         }
+
+
+        session.updateOfCanvasNeeded();
+
 
     }
 
+    function printDot(e,color) {
+
+
+
+     var g = new createjs.Graphics();
+      g.setStrokeStyle(1 );
+      g.beginStroke(color);
+      g.beginFill("rgba(0,0,0,0)");
+      g.drawCircle(0,0,1);
+      g.endFill();
+
+
+      var s = new createjs.Shape(g);
+      MapHandler.copyCordinates(e,s);
+
+      session.getMapContainer().addChild(s);
+
+    }
+    function updateMovmentList(c) {
+
+
+      var list = [];
+      var source = MapHandler.pixleCordinatesToIsometricCordinates(this.movable);
+      var myIndex = session.getMapContainer().getChildIndex(this.movable);
+      session.getMovableObjects().forEach(function(movableObject) {
+
+
+        var pixlePoint = movableObject.movable;
+        var movableIndex = session.getMapContainer().getChildIndex(movableObject.movable);
+        if(myIndex !== movableIndex) {
+
+              var margin = 2;
+
+              // top , right , bottom, left
+              var referencePoints = [
+
+                {
+                  "x": pixlePoint.x ,
+                  "y": pixlePoint.y + margin
+                },
+                {
+                  "x":pixlePoint.x + 32  -margin * 2,
+                  "y":pixlePoint.y + 16
+                },
+                {
+                  "x":pixlePoint.x - 32 + margin * 2 ,
+                  "y":pixlePoint.y + 16
+                },
+                {
+                  "x":pixlePoint.x,
+                  "y":pixlePoint.y + 32 - margin
+                }
+
+              ];
+
+
+        referencePoints.forEach(function(ref) {
+
+            list.push(MapHandler.pixleCordinatesToIsometricCordinates(ref));
+
+        })
+      }
+      });
+
+      console.log("updating map");
+      var v = MapHandler.generateFluidCollisionLayer(session.getMap()[3],list);
+      this.movmentList = MapHandler.shortestPath(v,source,this.isometricDestination);
+      this.movmentList.unshift(source);
+
+      updateCharacterDeepSorting.call(this);
+      session.updateOfCanvasNeeded();
+
+    };
     function updateCharacterDeepSorting() {
 
       var isometricCordinates = MapHandler.pixleCordinatesToIsometricCordinates(this.movable);
@@ -122,16 +206,16 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
       if(foundTileObject !== undefined && foundTileObject.displayElement !== undefined) {
 
         // firstly remove the character  ( we dont want to create any inconsistency with the indexes)
-        session.getStage().removeChild(this.movable)
+        session.getMapContainer().removeChild(this.movable)
 
         // get the index of the tile
-        var index = session.getStage().getChildIndex(foundTileObject.displayElement);
+        var index = session.getMapContainer().getChildIndex(foundTileObject.displayElement);
 
         // add our character at that given position , will force everything above to increase there index
-        session.getStage().addChildAt(this.movable,index);
+        session.getMapContainer().addChildAt(this.movable,index);
 
         // our character currently is located under the tile, swap them.
-        session.getStage().swapChildren(this.movable,foundTileObject.displayElement);
+        session.getMapContainer().swapChildren(this.movable,foundTileObject.displayElement);
 
       }
 

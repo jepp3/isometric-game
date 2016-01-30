@@ -25,13 +25,16 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
 
         if(this.selectedArea) {
           var selectedAreaBounds =  this.selectedArea.getBounds();
-
           this.selectedAreaGlobalCordinates = {
-            "x":this.selectedArea.x -32 ,
-            "y":this.selectedArea.y - 96,
+            "x":this.selectedArea.x ,
+            "y":this.selectedArea.y,
             "width":selectedAreaBounds.width,
             "height":selectedAreaBounds.height
           };
+
+          session.getStage().localToGlobal(selectedAreaBounds.x, selectedAreaBounds.y,this.selectedAreaGlobalCordinates);
+
+      //      this.selectedArea.localToGlobal(selectedAreaBounds.x - 32, selectedAreaBounds.y - 96,this.selectedAreaGlobalCordinates);
 
           this.options.onSelect(this.selectedAreaGlobalCordinates);
 
@@ -41,6 +44,7 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
           // clean up to next time
           this.selectedArea = undefined;
           this.selectedAreaGlobalCordinates = undefined;
+          session.updateOfCanvasNeeded();
 
         }
   };
@@ -55,7 +59,6 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
   **/
   function checkIntersection (rect1,rect2) {
 
-      console.log(rect1,rect2)
       if ( rect1.x >= rect2.x + rect2.width || rect1.x + rect1.width <= rect2.x || rect1.y >= rect2.y + rect2.height || rect1.y + rect1.height <= rect2.y ) return false;
       return true;
 
@@ -74,8 +77,9 @@ define(["utils/MapHandler","utils/Session","utils/Printable"],function(MapHandle
 
     var currentMousePosition = session.getStage().globalToLocal(ev.stageX,ev.stageY);
     this.selectedArea.graphics.clear().beginFill("#000").drawRect(0,0,  currentMousePosition.x - this.pressmove.x,currentMousePosition.y - this.pressmove.y);
-    this.selectedArea.setBounds(this.pressmove.x,this.pressmove.y,  currentMousePosition.x - this.pressmove.x,currentMousePosition.y - this.pressmove.y);
 
+    this.selectedArea.setBounds(this.pressmove.x,this.pressmove.y,  currentMousePosition.x - this.pressmove.x,currentMousePosition.y - this.pressmove.y);
+    session.updateOfCanvasNeeded();
   };
 
   function createSelectArea()  {
